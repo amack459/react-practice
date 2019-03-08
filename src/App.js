@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 
-import './App.css';
-import Person from './Person/Person';
+import styles from './assets/App.css';
+import People from './components/People/People';
+import Cockpit from './components/Cockpit/Cockpit';
 
 class App extends Component {
   state = {
-    persons: [
+    people: [
       {id:1, name: 'Acacia', age: 31 },
       {id:2, name: 'Valentina', age: 37 },
       {id:3, name: 'Albert', age: 9 }
@@ -15,18 +16,17 @@ class App extends Component {
   }
 
   deleteNameHandler = (personIndex) => {
-    const people = [...this.state.persons];
+    const people = [...this.state.people];
     people.splice(personIndex, 1);
-    this.setState({persons: people});
+    this.setState({people: people});
   }
 
   nameChangeHandler = (event, id) => {
-    const personIndex = this.state.persons.findIndex(p => {
+    const personIndex = this.state.people.findIndex(p => {
       return p.id ===id;
-
     });
     const person = {
-      ...this.state.persons[personIndex]
+      ...this.state.people[personIndex]
     };
 
     // Alternative way of updating an object. Less modern but equal
@@ -34,11 +34,10 @@ class App extends Component {
 
     person.name = event.target.value;
 
-    const persons = [...this.state.persons];
-    persons[personIndex] = person;
+    const people = [...this.state.people];
+    people[personIndex] = person;
 
-
-    this.setState( {persons: persons} )
+    this.setState( {people: people} )
   }
 
   togglePersonHandler = () => {
@@ -47,57 +46,30 @@ class App extends Component {
   }
 
   render() {
-    const style = {
-      backgroundColor: 'green',
-      borderRadius: '2px',
-      color: 'white',
-      font: 'inherit',
-      border: '1px solid blue',
-      padding: '8px',
-      cursor: 'pointer',
-    };
-
     let people = null;
 
     if(this.state.showPeople) {
       people = (
         <div>
-          {this.state.persons.map((person, index) => {
-            return <Person
-              click={() => this.deleteNameHandler(index)}
-              name={person.name}
-              age={person.age}
-              key={person.id}
-              changed={(event) => this.nameChangedHandler(event, person.id)} />
-          })}
+          <People
+            people={this.state.people}
+            clicked={this.deleteNameHandler}
+            changed={this.nameChangeHandler}
+          />
         </div>
       );
-      style.backgroundColor = 'red';
+      // style.backgroundColor = 'red';
     }
 
-    const classes = [];
-    if(this.state.persons.length <= 2) {
-      classes.push('red');
-    }
-    if(this.state.persons.length <= 1) {
-      classes.push('bold');
-    }
+
     return (
-
-        <div className="App">
-          <h1>HI, HAMBURGER</h1>
-            <p className={classes.join(' ')}>What's happening?!</p>
-          {/* THIS CAN BE INEFFICIENT COMPARED TO LINE 88 */}
-          <button
-          style={style}
-          onClick={this.togglePersonHandler}>Switch Info</button>
+        <div className={styles.App}>
+          < Cockpit
+            showPeople={this.state.showPeople}
+            people={this.state.people}
+            clicked={this.togglePersonHandler}
+          />
           {people}
-          {/* <button
-          style={style}
-          onClick={() => this.switchInfoHandler('Valentina!!!')}>Switch Info</button> */}
-          {/* {
-            this.state.showPeople === true ?
-          } */}
         </div>
       );
       //return React.createElement('div', {className: 'App'}, React.createElement('h1', null, 'HI, HAMBURGER!'))
